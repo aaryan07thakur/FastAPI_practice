@@ -1,0 +1,5 @@
+{"p001": {"name": "Dipesh Thakur", "city":"sarlahi", "age":27, "gender":"Male", "height":
+1.65, "weight": 70, "verdict": "Obese"}, "p002": {"name": "John Doe", "city": "Kathmandu", "age": 30,
+"gender":"Male", "height": 1.75, "weight": 80, "verdict": "Overweight"}, "p003": {"name": "Jane Smith", "city":
+"Pokhara", "age": 28, "gender":"Male", "height":
+1.65, "weight": 70, "verdict": "Obese"}}
