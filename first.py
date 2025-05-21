@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Path, HTTPException
 import json
  
 
@@ -25,3 +25,12 @@ def view():
     data=load_json()
     return data
 
+
+
+@app.get("/patient/{patent_id}")
+def view_patient(patent_id: str=Path(..., title="The ID of the patent to view", description="Enter the patent ID to view its details")):
+    data = load_json()
+    if patent_id in data:
+        return data[patent_id]
+    else:
+        raise HTTPException(status_code=404, detail="patent not found")
