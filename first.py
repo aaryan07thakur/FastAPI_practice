@@ -22,20 +22,7 @@ class Patient(BaseModel):
     weight: Annotated[float, Field(..., gt=0, description="Weight in kg")]
     height: Annotated[float, Field(..., gt=0, description="Height in feet")]
 
-    # @property
-    # def bmi(self) -> float:
-    #     return round(self.weight / ((self.height / 100) ** 2), 2)
 
-    # @property
-    # def vredict(self) -> str:
-    #     if self.bmi < 18.5:
-    #         return "Underweight"
-    #     elif 18.5 <= self.bmi < 24.9:
-    #         return "Normal weight"
-    #     elif 25 <= self.bmi < 29.9:
-    #         return "Overweight"
-    #     else:
-    #         return "Obesity"
 
 
 class PatientUpdate(BaseModel):
@@ -199,101 +186,31 @@ def delete_patient(patient_id:str):
 
 
 
-
-
-
-
-# @app.get("/patient/{patient_id}")
-# def view_patient(patient_id: str=Path(..., title="The ID of the patient to view", description="Enter the patent ID to view its details")):
-#     """View a specific patient by ID"""
-#     logging.info(f"Accessing the view_patient endpoint for patient_id: {patient_id}")
-#     data = load_json()
-#     if patient_id in data:
-#         return data[patient_id]
-#     else:
-#         raise HTTPException(status_code=404, detail="patient not found")
+@app.get("/sort")
+def sort_patent(sort_by:str=Query(..., description="sort on the basis of weight and height"),
+                order:str=Query("asc",description="sort in ascending or descending order")):
+    logging.info(f"sort_by: {sort_by}")
+    
+    valid_fields=["weight", "height"]
+    logging.info(f"sort_by: {sort_by}")
+    if sort_by not in valid_fields:
+        logging.error(f"invalid field")
+        raise HTTPException(status_code=400, detail=f"Invalid  fields select from {valid_fields}")
+    
+    if not  order in ["asc", "desc"]:
+        raise HTTPException(status_code=400, detail="invalid order, select between asc and desc")
+    
+    logging.info(f"order: {order}")
+    data = load_json()
+    sorted_data = sorted(data, key=lambda x: x.get(sort_by, 0), reverse=(order == "desc"))
+    logging.info(f"Sorted data: {sorted_data}")
     
 
-# @app.get("/sort")
-# def sort_patent(sort_by:str=Query(..., description="sort on the basis of weight and height"),
-#                 order:str=Query("asc",description="sort in ascending or descending order")):
-#     logging.info(f"sort_by: {sort_by}")
-    
-#     valid_fields=["weight", "height"]
-#     logging.info(f"sort_by: {sort_by}")
-#     if sort_by not in valid_fields:
-#         logging.error(f"invalid field")
-#         raise HTTPException(status_code=400, detail=f"Invalid  fields select from {valid_fields}")
-    
-#     if not  order in ["asc", "desc"]:
-#         raise HTTPException(status_code=400, detail="invalid order, select between asc and desc")
-    
-#     logging.info(f"order: {order}")
-#     data=load_json()
-#     sort_order=True if order=="asc" else False
-#     sorted_data=sorted(data.values(), key=lambda x:x.get(sort_by,0), reverse=sort_order)
 
-#     return sorted_data
+    # logging.info(f"order: {order}")
+    # data=load_json()
+    # sort_order=True if order=="asc" else False
+    # sorted_data=sorted(data.value(), key=lambda x:x.get(sort_by,0), reverse=sort_order)
+
+    return sorted_data
    
-
-# @app.post("/create")
-# def create_patient(patient: patient):
-#     logging.info(f"creating new patent")
-#     #load existing data
-#     data=load_json()
-#     logging.info(f"data: {data}")
-
-#     #check if the patent is already present
-#     if patient.patient_id in data:
-#         raise HTTPException(status_code=400, detail="patent already exists")
-    
-#     #add the new patent to the data
-#     logging.info(f"adding new patient {patient.patient_id}")
-#     data[patient.patient_id]=patient.dict()
-
-#     #save the data
-#     save_data(data)
-#     return JSONResponse(status_code=201, content={"message": "patent created Successfully", })
-
-
-
-# @app.put("/edit/{patient_id}")
-# def update_patiend(patient_id:str, patient_update:patientsupdate):
-#     """Update a specific patient by ID"""
-
-
-#     data=load_json()
-
-#     if patient_id not in data:
-#         raise HTTPException(status_code=404, detail="patient not found")
-    
-
-#     logging.info(f"updating patient {patient_id}")
-#     #update the patient details
-#     existing_patient_info=data[patient_id]
-
-#     updated_patient_info=patient_update.model_dump(exclude_unset=True)
-
-
-#     for key, value in updated_patient_info.items():
-#         existing_patient_info[key] = value
-
-#     # existing_patient_info -> pydantic object -> updated bmi + verdict
-#     existing_patient_info['id']=patient_id
-#     patient_pydantic_object = patient(**existing_patient_info)
-
-#     # -> pydantic object -> dict() to convert it back to a dictionary
-#     existing_patient_info=patient_pydantic_object.model_dump(exclude={'id'})  # Exclude the 'id' field from the output
-    
-#     #add this dict to data
-#     data[patient_id] = existing_patient_info
-#     # save the updated patient info back to the data
-#     logging.info(f"updated patient info: {patient_pydantic_object}")
-#     save_data(data)
-
-#     return JSONResponse(status_code=200, content={"message": "patient updated successfully", "data": existing_patient_info})
-
-
-
-    
-
