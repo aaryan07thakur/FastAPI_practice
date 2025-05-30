@@ -77,6 +77,7 @@ def about():
     return {"message": "A fully functional API to manage patients and their details"}
 
 
+
 @app.get("/view")
 def view_patients():
     """View all patients or return empty list if no data"""
@@ -204,13 +205,7 @@ def sort_patent(sort_by:str=Query(..., description="sort on the basis of weight 
     data = load_json()
     sorted_data = sorted(data, key=lambda x: x.get(sort_by, 0), reverse=(order == "desc"))
     logging.info(f"Sorted data: {sorted_data}")
-    
 
-
-    # logging.info(f"order: {order}")
-    # data=load_json()
-    # sort_order=True if order=="asc" else False
-    # sorted_data=sorted(data.value(), key=lambda x:x.get(sort_by,0), reverse=sort_order)
 
     return sorted_data
    
